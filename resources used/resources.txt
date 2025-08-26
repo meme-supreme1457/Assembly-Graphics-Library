@@ -1,0 +1,5 @@
+https://www.tutorialspoint.com/computer_graphics/computer_graphics_ellipse_generation_algorithm.htm
+
+https://www.cs.virginia.edu/~evans/cs216/guides/x86.html#registers
+
+https://devdocs.inightmare.org/tutorials/x86-assembly-graphics-part-i-mode-13h.html
