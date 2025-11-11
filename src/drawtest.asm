@@ -14,59 +14,76 @@ section .text
 global initialize
 global put_pixel
 global clean_up
+global draw_line
 
 start:
+
 call initialize ; initialize program
-push 1
-push 1
-call put_pixel
-add esp, 4
 
 push 2
 push 2
-call put_pixel
-add esp, 4
-
-push 3
-push 3
-call put_pixel
-add esp, 4
-
-push 4
-push 4
-call put_pixel
-add esp, 4
-
-push 5
-push 5
-call put_pixel
-add esp, 4
-
 push 6
 push 6
-call put_pixel
-add esp, 4
-
-push 7
-push 7
-call put_pixel
-add esp, 4
-
-push 8
-push 8
-call put_pixel
-add esp, 4
-
-push 9
-push 9
-call put_pixel
-add esp, 4
-
-push 10
-push 10
-call put_pixel
-add esp, 4
+call draw_line
+add esp, 8
 call clean_up
+
+
+draw_line:
+
+; Subroutine Prologue 
+push ebp ; Save the old base pointer value.
+mov ebp, esp ; Set the new base pointer value.
+sub esp, 4; Make room for two 2-byte local variables and one 4-byte local variable
+push ebx
+xor ebx,ebx
+xor eax,eax
+
+
+
+mov cx, [ebp+10]
+sub cx, [ebp+6] ;cx register stores delta-x
+
+
+mov ax, [ebp+12]
+sub ax, [ebp+8] ;ax register stores delta-y
+
+
+div cx ;ax stores slope
+mov bx, [ebp+6] ; bx stores x1
+
+line_loop_start:
+    cmp bx,[ebp+10]
+    jg line_epilogue ;while !(bx > x2)
+    ;mov [ebp-8], esp ; save esp
+    mov [ebp-2], ax ; save value of ax
+    mov [ebp-4], bx ; save value of bx
+    
+    ;push bx
+    ;push word [ebp+8]
+    ;call put_pixel
+   
+    mov ax, bx
+    mul word [canvas_len]
+    add ax,[ebp+8]
+    mov di,ax
+    mov dl,15
+    mov [es:di],dl
+   
+    xor eax,eax
+    xor ebx,ebx
+    mov ax, [ebp-2] ;restore ax
+    mov bx, [ebp-4] ;restore bx
+
+    add [ebp+8], ax ; add slope to y value
+    inc bx ; increment x value
+jmp line_loop_start
+
+line_epilogue:
+pop ebx
+mov esp, ebp
+pop ebp
+ret
 
 
 put_pixel:
